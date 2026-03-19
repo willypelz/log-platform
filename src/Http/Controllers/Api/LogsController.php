@@ -47,6 +47,14 @@ class LogsController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        // In file-only mode, we can't fetch by ID
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Single log lookup by ID is only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $log = \Willypelz\LogPlatform\Models\IndexedLog::findOrFail($id);
 
         return response()->json($log);
@@ -86,6 +94,14 @@ class LogsController extends Controller
      */
     public function shareLink(string $id): JsonResponse
     {
+        // In file-only mode, we can't generate shareable links by ID
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Shareable links are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $log = \Willypelz\LogPlatform\Models\IndexedLog::findOrFail($id);
 
         $token = base64_encode(json_encode([

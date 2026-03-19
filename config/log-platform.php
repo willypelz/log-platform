@@ -35,10 +35,12 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configure how logs are indexed for fast searching.
+    | Set to true to enable database indexing (requires migrations).
+    | When disabled, logs are read directly from files (default behavior).
     |
     */
     'indexing' => [
-        'enabled' => env('LOG_PLATFORM_INDEXING_ENABLED', true),
+        'enabled' => env('LOG_PLATFORM_INDEXING_ENABLED', false),
         'chunk_size' => 65536, // 64KB
         'batch_size' => 1000, // Bulk insert batch size
         'queue' => env('LOG_PLATFORM_QUEUE', 'default'),

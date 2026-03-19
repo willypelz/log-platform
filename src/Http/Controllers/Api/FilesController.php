@@ -81,11 +81,14 @@ class FilesController extends Controller
             return response()->json(['error' => 'File not found'], 404);
         }
 
-        // Delete associated indexed logs
-        \Willypelz\LogPlatform\Models\IndexedLog::where('source_file', $filePath)->delete();
+        // Only delete database records if indexing is enabled
+        if (config('log-platform.indexing.enabled')) {
+            // Delete associated indexed logs
+            \Willypelz\LogPlatform\Models\IndexedLog::where('source_file', $filePath)->delete();
 
-        // Delete file state
-        \Willypelz\LogPlatform\Models\LogFileState::where('path', $filePath)->delete();
+            // Delete file state
+            \Willypelz\LogPlatform\Models\LogFileState::where('path', $filePath)->delete();
+        }
 
         // Delete the file
         File::delete($filePath);

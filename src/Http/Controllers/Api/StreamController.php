@@ -13,6 +13,19 @@ class StreamController extends Controller
      */
     public function stream(Request $request): StreamedResponse
     {
+        // Streaming requires database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->stream(function () {
+                echo "data: " . json_encode([
+                    'error' => 'Streaming is only available with database indexing enabled.',
+                    'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+                ]) . "\n\n";
+            }, 400, [
+                'Content-Type' => 'text/event-stream',
+                'Cache-Control' => 'no-cache',
+            ]);
+        }
+
         return response()->stream(function () use ($request) {
             // Set headers for SSE
             echo "retry: 10000\n\n";

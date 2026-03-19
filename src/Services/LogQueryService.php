@@ -107,6 +107,23 @@ class LogQueryService implements QueryEngineInterface
 
     public function getByRequestId(string $requestId): array
     {
+        // File-only mode
+        if ($this->fileReader) {
+            $logPath = storage_path('logs');
+            $files = glob($logPath . '/*.log');
+            $allLogs = [];
+
+            foreach ($files as $file) {
+                $logs = $this->fileReader->readFile($file, [], 500);
+                $allLogs = array_merge($allLogs, $logs);
+            }
+
+            // Filter by request_id
+            return array_filter($allLogs, function($log) use ($requestId) {
+                return isset($log['request_id']) && $log['request_id'] === $requestId;
+            });
+        }
+
         return IndexedLog::requestId($requestId)
             ->orderBy('logged_at', 'asc')
             ->get()
@@ -115,6 +132,25 @@ class LogQueryService implements QueryEngineInterface
 
     public function getByFingerprint(string $fingerprint, int $limit = 100): array
     {
+        // File-only mode
+        if ($this->fileReader) {
+            $logPath = storage_path('logs');
+            $files = glob($logPath . '/*.log');
+            $allLogs = [];
+
+            foreach ($files as $file) {
+                $logs = $this->fileReader->readFile($file, [], 500);
+                $allLogs = array_merge($allLogs, $logs);
+            }
+
+            // Filter by fingerprint and limit
+            $filtered = array_filter($allLogs, function($log) use ($fingerprint) {
+                return isset($log['fingerprint']) && $log['fingerprint'] === $fingerprint;
+            });
+
+            return array_slice($filtered, 0, $limit);
+        }
+
         return IndexedLog::fingerprint($fingerprint)
             ->orderBy('logged_at', 'desc')
             ->limit($limit)

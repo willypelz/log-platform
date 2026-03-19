@@ -14,6 +14,14 @@ class AlertsController extends Controller
      */
     public function index(): JsonResponse
     {
+        // Alerts require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Alerts are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $rules = AlertRule::with('events')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -26,6 +34,14 @@ class AlertsController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Alerts require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Alerts are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'query' => 'required|string',
@@ -47,6 +63,14 @@ class AlertsController extends Controller
      */
     public function update(Request $request, AlertRule $rule): JsonResponse
     {
+        // Alerts require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Alerts are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'query' => 'sometimes|string',
@@ -68,6 +92,14 @@ class AlertsController extends Controller
      */
     public function destroy(AlertRule $rule): JsonResponse
     {
+        // Alerts require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Alerts are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $rule->delete();
 
         return response()->json(null, 204);

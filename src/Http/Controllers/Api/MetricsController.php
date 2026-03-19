@@ -16,6 +16,14 @@ class MetricsController extends Controller
      */
     public function overview(Request $request): JsonResponse
     {
+        // Metrics require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Metrics are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $env = $request->input('env', config('app.env'));
         $from = $request->input('from', now()->subHour());
         $to = $request->input('to', now());
@@ -59,6 +67,14 @@ class MetricsController extends Controller
      */
     public function timeseries(Request $request): JsonResponse
     {
+        // Metrics require database indexing
+        if (!config('log-platform.indexing.enabled')) {
+            return response()->json([
+                'error' => 'Metrics are only available with database indexing enabled.',
+                'message' => 'Enable indexing in config/log-platform.php to use this feature.',
+            ], 400);
+        }
+
         $validated = $request->validate([
             'metric' => 'required|string',
             'env' => 'nullable|string',
