@@ -148,7 +148,7 @@ return [
     |
     */
     'security' => [
-        'middleware' => ['web', 'auth'],
+        'middleware' => ['api'],
         'gates' => [
             'view-logs' => true,
             'manage-alerts' => true,
