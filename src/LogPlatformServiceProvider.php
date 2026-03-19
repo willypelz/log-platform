@@ -16,6 +16,7 @@ use Willypelz\LogPlatform\Services\LogQueryService;
 use Willypelz\LogPlatform\Services\StrategyManager;
 use Willypelz\LogPlatform\Services\StructuredQueryParser;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Log;
 
 class LogPlatformServiceProvider extends ServiceProvider
 {
@@ -91,7 +92,7 @@ class LogPlatformServiceProvider extends ServiceProvider
         // Load views (when we create them)
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'log-platform');
 
-        // Register custom Monolog handler creator
+        // Register custom Monolog handler
         $this->registerMonologHandler();
 
         // Schedule tasks

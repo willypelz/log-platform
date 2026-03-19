@@ -72,8 +72,3 @@ class LogParserTest extends TestCase
         $this->assertEquals('Test', $entry['message']); // Context removed from message
     }
 }
-use Willypelz\LogPlatform\Tests\TestCase;
-use Willypelz\LogPlatform\Services\LogParser;
-
-namespace Willypelz\LogPlatform\Tests\Unit;
-

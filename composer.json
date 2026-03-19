@@ -19,7 +19,9 @@
     },
     "require-dev": {
         "orchestra/testbench": "^8.0|^9.0",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^2.1",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +40,11 @@
             ]
         }
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test:coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "test:filter": "vendor/bin/phpunit --filter"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
-
