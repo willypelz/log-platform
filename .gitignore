@@ -1,0 +1,16 @@
+/vendor/
+/node_modules/
+/public/vendor/
+/resources/js/node_modules/
+/.idea/
+/.vscode/
+.DS_Store
+.env
+.env.backup
+composer.lock
+package-lock.json
+yarn.lock
+*.log
+storage/*.key
+.phpunit.result.cache
+

@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 dark:bg-gray-600 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500 dark:bg-gray-500;
+}
+
+/* Log level colors */
+.log-level-emergency { @apply text-red-900 bg-red-100 dark:text-red-100 dark:bg-red-900; }
+.log-level-alert { @apply text-red-800 bg-red-100 dark:text-red-200 dark:bg-red-900; }
+.log-level-critical { @apply text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900; }
+.log-level-error { @apply text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/50; }
+.log-level-warning { @apply text-yellow-700 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/50; }
+.log-level-notice { @apply text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/50; }
+.log-level-info { @apply text-blue-600 bg-blue-50 dark:text-blue-500 dark:bg-blue-900/30; }
+.log-level-debug { @apply text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-800; }
+
