@@ -151,6 +151,7 @@ return [
     */
     'security' => [
         'middleware' => ['api'],
+        'ui_middleware' => ['web'],  // Middleware for web UI route
         'gates' => [
             'view-logs' => true,
             'manage-alerts' => true,

@@ -1,5 +1,6 @@
 <?php
 
+use Willypelz\LogPlatform\Http\Controllers\LogPlatformController;
 use Willypelz\LogPlatform\Http\Controllers\Api\LogsController;
 use Willypelz\LogPlatform\Http\Controllers\Api\StreamController;
 use Willypelz\LogPlatform\Http\Controllers\Api\MetricsController;
@@ -7,8 +8,13 @@ use Willypelz\LogPlatform\Http\Controllers\Api\AlertsController;
 use Willypelz\LogPlatform\Http\Controllers\Api\FilesController;
 use Illuminate\Support\Facades\Route;
 
+// UI Route (Web)
+Route::get('/log-platform', [LogPlatformController::class, 'index'])
+    ->name('log-platform.index')
+    ->middleware(config('log-platform.security.ui_middleware', ['web']));
+
 // Apply middleware from config
-$middleware = config('log-platform.security.middleware', ['web', 'auth']);
+$middleware = config('log-platform.security.middleware', ['api']);
 
 Route::prefix('log-platform/api')
     ->middleware($middleware)
