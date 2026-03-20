@@ -23,7 +23,7 @@
                 <template x-for="file in files" :key="file.name">
                     <div class="flex items-center justify-between mb-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded px-2 py-1 cursor-pointer" @click="selectFile(file.name)">
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-200" x-text="file.name"></span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ file.size }}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400" x-text="file.size"></span>
                         <button class="ml-2 text-gray-400 hover:text-red-500" @click.stop="deleteFile(file.name)">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
