@@ -44,7 +44,7 @@
             <div class="flex flex-wrap gap-2 mb-6">
                 <template x-for="badge in levelBadges" :key="badge.level">
                     <span :class="badge.class" class="px-3 py-1 rounded-full text-xs font-semibold">
-                        {{ badge.label }}: <span x-text="badge.count"></span>
+                        <span x-text="badge.label"></span>: <span x-text="badge.count"></span>
                     </span>
                 </template>
             </div>
