@@ -2,88 +2,52 @@
 
 namespace Willypelz\LogPlatform\Console\Commands;
 
-use Willypelz\LogPlatform\Models\IndexedLog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
 class LogClearCommand extends Command
 {
     protected $signature = 'log:clear
-                            {--days=30 : Clear logs older than this many days}
-                            {--level= : Clear specific log level}
-                            {--env= : Clear specific environment}
-                            {--files : Also delete physical log files}
+                            {--days=30 : Delete log files older than this many days}
                             {--force : Skip confirmation}';
 
-    protected $description = 'Clear old log entries';
+    protected $description = 'Delete old physical log files from storage/logs';
 
     public function handle(): int
     {
-        $days = $this->option('days');
-        $level = $this->option('level');
-        $env = $this->option('env');
-        $deleteFiles = $this->option('files');
-        $force = $this->option('force');
-
-        $cutoff = now()->subDays($days);
-
-        $query = IndexedLog::where('logged_at', '<', $cutoff);
-
-        if ($level) {
-            $query->level($level);
-        }
-
-        if ($env) {
-            $query->environment($env);
-        }
-
-        $count = $query->count();
-
-        if ($count === 0) {
-            $this->info('No logs to clear.');
+        if (!config('log-platform.retention.enabled', false)) {
+            $this->warn('Retention is disabled. Enable it in config/log-platform.php (retention.enabled = true).');
             return self::SUCCESS;
         }
 
-        $this->warn("Found {$count} log entries to delete (older than {$days} days)");
+        $days   = (int) $this->option('days');
+        $cutoff = now()->subDays($days);
+        $path   = storage_path('logs');
+        $files  = File::glob("{$path}/*.log");
 
-        if (!$force && !$this->confirm('Continue?')) {
+        $toDelete = array_filter($files, fn($f) => File::lastModified($f) < $cutoff->timestamp);
+
+        if (empty($toDelete)) {
+            $this->info("No log files older than {$days} days found.");
+            return self::SUCCESS;
+        }
+
+        $this->warn('Files to delete (' . count($toDelete) . '):');
+        foreach ($toDelete as $file) {
+            $this->line('  ' . basename($file));
+        }
+
+        if (!$this->option('force') && !$this->confirm('Proceed with deletion?')) {
             $this->info('Cancelled.');
             return self::SUCCESS;
         }
 
-        // Delete from database
-        $deleted = $query->delete();
-        $this->info("✅ Deleted {$deleted} log entries from database");
-
-        // Delete physical files if requested
-        if ($deleteFiles) {
-            $this->deleteOldFiles($days);
+        foreach ($toDelete as $file) {
+            File::delete($file);
         }
 
+        $this->info('✅ Deleted ' . count($toDelete) . ' log file(s).');
         return self::SUCCESS;
-    }
-
-    protected function deleteOldFiles(int $days): void
-    {
-        $logPath = storage_path('logs');
-        $cutoff = now()->subDays($days);
-
-        $files = File::glob("{$logPath}/*.log");
-        $deletedCount = 0;
-
-        foreach ($files as $file) {
-            $mtime = File::lastModified($file);
-
-            if ($mtime < $cutoff->timestamp) {
-                File::delete($file);
-                $deletedCount++;
-                $this->line("  Deleted: " . basename($file));
-            }
-        }
-
-        if ($deletedCount > 0) {
-            $this->info("✅ Deleted {$deletedCount} log file(s)");
-        }
     }
 }
 

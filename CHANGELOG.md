@@ -2,49 +2,39 @@
 
 All notable changes to Laravel Log Platform will be documented in this file.
 
+## [2.0.0] - 2026-03-24
+
+### Breaking Changes
+- **Database layer completely removed.** No migrations, no Eloquent models, no queue jobs, no scheduled tasks.
+- Removed commands: `log:index`, `log:stats`
+- Removed controllers: `LogsController`, `AlertsController`, `MetricsController`
+- Removed services: `DatabaseIndexerStore`, `LogIndexer`, `LogQueryService`, `StructuredQueryParser`
+- Removed models: `IndexedLog`, `LogFileState`, `AlertRule`, `AlertEvent`, `MetricTimeseries`
+- Removed jobs: `IndexLogChunkJob`, `AggregateMetricsJob`, `EvaluateAlertsJob`
+- Removed contracts: `IndexerStoreInterface`, `QueryEngineInterface`
+- Removed `composer.json` dependencies: `illuminate/database`, `illuminate/queue`
+- Removed config keys: `indexing`, `alerts`, `metrics`, `streaming`, `shareable_links`
+
+### Added
+- `/log-platform/api/logs` — parsed, filterable log entries read directly from files
+- `/log-platform/api/contents` — raw paginated line reader per file
+- `/log-platform/api/stream` — filesystem-based SSE live tail (no DB polling)
+- `LogClearCommand` (`log:clear`) rewritten to delete physical `.log` files only
+- `LogInstallCommand` (`log:install`) simplified to publish config only
+
+### Migration note for existing installs
+If you previously ran migrations, the following tables can be safely dropped — they are no longer used:
+```sql
+DROP TABLE IF EXISTS log_platform_indexed_logs;
+DROP TABLE IF EXISTS log_platform_file_states;
+DROP TABLE IF EXISTS log_platform_alert_rules;
+DROP TABLE IF EXISTS log_platform_alert_events;
+DROP TABLE IF EXISTS log_platform_metric_timeseries;
+```
+
+---
+
 ## [1.0.0] - 2026-03-18
 
 ### Added
-- Initial release
-- Custom log generation strategies (daily, weekly, monthly, custom)
-- High-performance log indexing with chunked reading
-- Background indexing via queue jobs
-- Fast query engine with structured query parser
-- Real-time log streaming via SSE
-- Request correlation with unique IDs
-- Error fingerprinting for grouping similar errors
-- Metrics aggregation and dashboard
-- Alert system with configurable rules
-- Multi-environment support
-- Retention policies
-- Artisan commands: log:install, log:index, log:clear, log:stats
-- Modern Vue 3 SPA with dark mode
-- Virtual scrolling for large log sets
-- REST API for programmatic access
-- Comprehensive documentation
-
-### Architecture
-- Modular service-based design
-- Contract-driven interfaces
-- Extensible strategy pattern for naming
-- Queue-based background processing
-- Database indexing for fast queries
-- SSE for real-time updates
-- Middleware-based security
-
-### Performance
-- Handles GB-scale log files
-- Chunked file reading (64KB default)
-- Bulk database inserts (1000 rows default)
-- Cursor-based pagination
-- Virtual scrolling in UI
-- Query result caching
-
-### Developer Experience
-- Clean, well-documented code
-- PSR-4 autoloading
-- Laravel package auto-discovery
-- Publishable config and migrations
-- Extensible contracts
-- Example implementations
-
+- Initial release with database indexing, alerting, metrics, and queue-based background processing.

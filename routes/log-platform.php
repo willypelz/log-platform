@@ -1,11 +1,8 @@
 <?php
 
 use Willypelz\LogPlatform\Http\Controllers\LogPlatformController;
-use Willypelz\LogPlatform\Http\Controllers\Api\LogsController;
-use Willypelz\LogPlatform\Http\Controllers\Api\StreamController;
-use Willypelz\LogPlatform\Http\Controllers\Api\MetricsController;
-use Willypelz\LogPlatform\Http\Controllers\Api\AlertsController;
 use Willypelz\LogPlatform\Http\Controllers\Api\FilesController;
+use Willypelz\LogPlatform\Http\Controllers\Api\StreamController;
 use Illuminate\Support\Facades\Route;
 
 // UI Route (Web)
@@ -19,32 +16,20 @@ $middleware = config('log-platform.security.middleware', ['api']);
 Route::prefix('log-platform/api')
     ->middleware($middleware)
     ->group(function () {
-        // Logs
-        Route::get('/logs', [LogsController::class, 'index']);
-        Route::get('/logs/{id}', [LogsController::class, 'show']);
-        Route::post('/logs/{id}/share', [LogsController::class, 'shareLink']);
-        Route::get('/requests/{requestId}/logs', [LogsController::class, 'byRequestId']);
-        Route::get('/fingerprints/{fingerprint}/logs', [LogsController::class, 'byFingerprint']);
+        // File listing & management
+        Route::get('/files',             [FilesController::class, 'index']);
+        Route::get('/files/{filename}',  [FilesController::class, 'show']);
+        Route::post('/files/download',   [FilesController::class, 'download']);
+        Route::delete('/files/delete',   [FilesController::class, 'delete']);
 
-        // Real-time streaming
-        Route::get('/logs/stream', [StreamController::class, 'stream']);
+        // Log content endpoints
+        Route::get('/logs',               [FilesController::class, 'logs']);      // parsed + filtered entries
+        Route::get('/contents',           [FilesController::class, 'contents']);  // raw paginated lines
 
-        Route::get('/files', [FilesController::class, 'index']);
-        Route::get('/files/{filename}', [FilesController::class, 'show']);
-        Route::post('/files/download', [FilesController::class, 'download']);
-        Route::delete('/files/delete', [FilesController::class, 'delete']);
+        // Real-time tail (file-based SSE)
+        Route::get('/stream',            [StreamController::class, 'stream']);
 
-        // Metrics
-        Route::get('/metrics/overview', [MetricsController::class, 'overview']);
-        Route::get('/metrics/timeseries', [MetricsController::class, 'timeseries']);
-
-        // Alerts
-        Route::get('/alerts/rules', [AlertsController::class, 'index']);
-        Route::post('/alerts/rules', [AlertsController::class, 'store']);
-        Route::patch('/alerts/rules/{rule}', [AlertsController::class, 'update']);
-        Route::delete('/alerts/rules/{rule}', [AlertsController::class, 'destroy']);
-
-        // Hosts (multi-host support)
+        // Hosts (returns configured log paths, no DB)
         Route::get('/hosts', function () {
             $hostManager = app(\Willypelz\LogPlatform\Services\HostManager::class);
             return response()->json($hostManager->all());

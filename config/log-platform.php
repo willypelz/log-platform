@@ -31,103 +31,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Indexing Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Configure how logs are indexed for fast searching.
-    | Set to true to enable database indexing (requires migrations).
-    | When disabled, logs are read directly from files (default behavior).
-    |
-    */
-    'indexing' => [
-        'enabled' => env('LOG_PLATFORM_INDEXING_ENABLED', false),
-        'chunk_size' => 65536, // 64KB
-        'batch_size' => 1000, // Bulk insert batch size
-        'queue' => env('LOG_PLATFORM_QUEUE', 'default'),
-        'max_lines_per_job' => 10000,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Real-Time Streaming
-    |--------------------------------------------------------------------------
-    |
-    | Configure real-time log streaming.
-    |
-    */
-    'streaming' => [
-        'enabled' => env('LOG_PLATFORM_STREAMING_ENABLED', true),
-        'driver' => env('LOG_PLATFORM_STREAMING_DRIVER', 'sse'), // sse or websocket
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Alerting System
-    |--------------------------------------------------------------------------
-    |
-    | Configure the alerting system for error notifications.
-    |
-    */
-    'alerts' => [
-        'enabled' => env('LOG_PLATFORM_ALERTS_ENABLED', true),
-        'channels' => [
-            'mail' => [
-                'enabled' => true,
-                'to' => env('LOG_PLATFORM_ALERT_EMAIL'),
-            ],
-            'slack' => [
-                'enabled' => false,
-                'webhook_url' => env('LOG_PLATFORM_SLACK_WEBHOOK'),
-            ],
-            'webhook' => [
-                'enabled' => false,
-                'url' => env('LOG_PLATFORM_WEBHOOK_URL'),
-            ],
-        ],
-        'evaluation_interval' => 60, // seconds
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Metrics Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Configure metrics aggregation and rollups.
-    |
-    */
-    'metrics' => [
-        'enabled' => env('LOG_PLATFORM_METRICS_ENABLED', true),
-        'rollup_intervals' => [60, 300, 3600], // 1m, 5m, 1h in seconds
-        'aggregation_interval' => 60, // Run aggregation every 60 seconds
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Retention Policy
-    |--------------------------------------------------------------------------
-    |
-    | Configure how long logs are kept.
-    |
-    */
-    'retention' => [
-        'enabled' => env('LOG_PLATFORM_RETENTION_ENABLED', false),
-        'days' => 30,
-        'by_level' => [
-            'debug' => 7,
-            'info' => 14,
-            'warning' => 30,
-            'error' => 90,
-            'critical' => 365,
-        ],
-        'by_environment' => [
-            'local' => 7,
-            'staging' => 30,
-            'production' => 90,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | UI Configuration
     |--------------------------------------------------------------------------
     |
@@ -152,19 +55,15 @@ return [
     'security' => [
         'middleware' => ['api'],
         'ui_middleware' => ['web'],  // Middleware for web UI route
-        'gates' => [
-            'view-logs' => true,
-            'manage-alerts' => true,
-        ],
         'allowed_environments' => ['local', 'staging', 'production'],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Multi-Host Support
+    | Log Directory / Multi-Host Support
     |--------------------------------------------------------------------------
     |
-    | Configure multiple hosts to aggregate logs from different servers.
+    | Add additional named paths here. All paths are file-system only.
     |
     */
     'hosts' => [
@@ -194,16 +93,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Shareable Links
-    |--------------------------------------------------------------------------
-    */
-    'shareable_links' => [
-        'enabled' => true,
-        'expires_days' => 7,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Log Type Detection
     |--------------------------------------------------------------------------
     */
@@ -216,21 +105,23 @@ return [
     |--------------------------------------------------------------------------
     | Additional Folders
     |--------------------------------------------------------------------------
+    |
+    | Extra absolute paths to include alongside storage/logs.
+    |
     */
     'additional_folders' => [],
 
     /*
     |--------------------------------------------------------------------------
-    | Performance Tuning
+    | Retention Policy
     |--------------------------------------------------------------------------
     |
-    | Advanced performance settings.
+    | Configure how long logs are kept.
     |
     */
-    'performance' => [
-        'query_cache_ttl' => 60, // seconds
-        'enable_query_log' => false,
-        'max_memory_mb' => 256,
+    'retention' => [
+        'enabled' => env('LOG_PLATFORM_RETENTION_ENABLED', false),
+        'days' => 30,
     ],
 ];
 
